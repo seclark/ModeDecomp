@@ -128,10 +128,10 @@ def xcorr_flatsky(simkey="512_alfven3_0002_a_z", deglen=10, apotype="C2", aposca
         EBdset = f.create_dataset(name='EB', data=EB)
         BEdset = f.create_dataset(name='BE', data=BE)
         BBdset = f.create_dataset(name='BB', data=BB)
-        dset.attrs['deglen'] = deglen
-        dset.attrs['Epure'] = Epure
-        dset.attrs['Bpure'] = Bpure
-        dset.attrs['ell_binned'] = ells_uncoupled
+        TTdset.attrs['deglen'] = deglen
+        TTdset.attrs['Epure'] = Epure
+        TTdset.attrs['Bpure'] = Bpure
+        TTdset.attrs['ell_binned'] = ells_uncoupled
         
 if __name__ == "__main__":
         
