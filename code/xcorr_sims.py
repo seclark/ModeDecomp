@@ -138,7 +138,7 @@ if __name__ == "__main__":
     allsimkeys = ["512_alfven{}_000{}_{}_z".format(i, n, ae) for n in np.arange(1, 5) for i in [1, 3, 6] for ae in ["a", "e"]]
     
     apotype = "C2"
-    deglen = 10
+    deglen = 1
     aposcale = 0.5
     Epure = True
     Bpure = True
