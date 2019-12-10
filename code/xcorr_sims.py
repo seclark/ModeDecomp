@@ -145,7 +145,7 @@ def xcorr_flatsky(modedecomp=False, simkey="512_alfven3_0002_a_z", Imapkey="", d
 if __name__ == "__main__":
     
     apotype = "C2"
-    deglen = 1
+    deglen = 10
     aposcale = 0.5
     Epure = True
     Bpure = True
