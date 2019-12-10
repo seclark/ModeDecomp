@@ -152,10 +152,10 @@ if __name__ == "__main__":
     modedecomp = True
     
     if modedecomp:
-        allsimkeys = ["b{}p{}_{}_z".format(b, p, wave) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for wave in ["alf", "fast", "slow"]]
-        allImapkeys = ["c512b{}p{}_z".format(b, p, wave) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for wave in ["alf", "fast", "slow"]]
-        #allsimkeys = ["c512b{}p{}_{}".format(b, p, d) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for d in ["x", "y", "z"]]
-        #allImapkeys = ["c512b{}p{}_{}".format(b, p, d) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for d in ["x", "y", "z"]]
+        #allsimkeys = ["b{}p{}_{}_z".format(b, p, wave) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for wave in ["alf", "fast", "slow"]]
+        #allImapkeys = ["c512b{}p{}_z".format(b, p, wave) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for wave in ["alf", "fast", "slow"]]
+        allsimkeys = ["c512b{}p{}_{}".format(b, p, d) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for d in ["x", "y", "z"]]
+        allImapkeys = ["c512b{}p{}_{}".format(b, p, d) for b in [".1", ".5", "1", "3", "5"] for p in [".01", "2"] for d in ["x", "y", "z"]]
     else:
         # all sim keys for non-mode decomp sims
         allsimkeys = ["512_alfven{}_000{}_{}_z".format(i, n, ae) for n in np.arange(1, 5) for i in [1, 3, 6] for ae in ["a", "e"]]
