@@ -9,7 +9,7 @@ class SimsTQU():
     Class for TQU maps from Blakesley's sims
     Can specify either TQU=[T, Q, U] or a filename
     """
-    def __init__(self, TQU= None, fn=None):
+    def __init__(self, TQU= None, fn=None, modedecomp=False, ikey=""):
         # Specify maps by hand
         if TQU is not None:
             self.T = T
@@ -18,11 +18,17 @@ class SimsTQU():
             
         # Or: Load from filename
         if fn is not None:
-            root = "/data/seclark/BlakesleySims/simdata/"
-            self.T = fits.getdata(root+"Imap_"+fn+".fits")
-            self.Q = fits.getdata(root+"q_"+fn+".fits")
-            self.U = fits.getdata(root+"u_"+fn+".fits")
-            
+            if modedecomp:
+                root = "/data/seclark/BlakesleySims/simdata/ModeDecomp/"
+                self.T = fits.getdata(root+"Imap_"+ikey+".fits")
+                self.Q = fits.getdata(root+"q_"+fn+".fits")
+                self.U = fits.getdata(root+"u_"+fn+".fits")
+            else:
+                root = "/data/seclark/BlakesleySims/simdata/"
+                self.T = fits.getdata(root+"Imap_"+fn+".fits")
+                self.Q = fits.getdata(root+"q_"+fn+".fits")
+                self.U = fits.getdata(root+"u_"+fn+".fits")
+                
         self.Q[np.where(np.isnan(self.Q) == True)] = 0
         self.U[np.where(np.isnan(self.U) == True)] = 0
             
@@ -45,9 +51,9 @@ class SimsTQU():
         assert( (self.ny, self.nx) == self.U.shape )
         
     
-def xcorr_flatsky(simkey="512_alfven3_0002_a_z", deglen=10, apotype="C2", aposcale=0.5, Epure=True, Bpure=True):
+def xcorr_flatsky(modedecomp=False, simkey="512_alfven3_0002_a_z", Imapkey="", deglen=10, apotype="C2", aposcale=0.5, Epure=True, Bpure=True):
     
-    TQU = SimsTQU(fn=simkey)
+    TQU = SimsTQU(fn=simkey, modedecomp=modedecomp, ikey=Imapkey)
 
     # Define flat-sky field
     #  - Lx and Ly: the size of the patch in the x and y dimensions (in radians)
@@ -116,7 +122,10 @@ def xcorr_flatsky(simkey="512_alfven3_0002_a_z", deglen=10, apotype="C2", aposca
     BE = cl22_uncoupled[2]
     BB = cl22_uncoupled[3]
     
-    outroot = root = "/data/seclark/BlakesleySims/xcorrdata/"
+    if modedecomp:
+        outroot = "/data/seclark/BlakesleySims/simdata/ModeDecomp/xcorrdata/"
+    else:
+        outroot = "/data/seclark/BlakesleySims/xcorrdata/"
     outfn = simkey+"_deglen{}_{}apod{}_EBpure{}{}.h5".format(deglen, apotype, aposcale, Epure, Bpure)
     
     with h5py.File(outroot+outfn, 'w') as f:
@@ -134,20 +143,38 @@ def xcorr_flatsky(simkey="512_alfven3_0002_a_z", deglen=10, apotype="C2", aposca
         TTdset.attrs['ell_binned'] = ells_uncoupled
         
 if __name__ == "__main__":
-        
-    allsimkeys = ["512_alfven{}_000{}_{}_z".format(i, n, ae) for n in np.arange(1, 5) for i in [1, 3, 6] for ae in ["a", "e"]]
     
     apotype = "C2"
     deglen = 1
     aposcale = 0.5
     Epure = True
     Bpure = True
+    modedecomp = True
     
-    for _i, skey in enumerate(allsimkeys):
-        time0 = time.time()
-        xcorr_flatsky(simkey=skey, deglen=deglen, apotype=apotype, aposcale=aposcale, Epure=Epure, Bpure=Bpure)  
-        time1 = time.time()
-          
-        print("skey {} took {} minutes".format(_i, (time1 - time0)/60.))
+    if modedecomp:
+        allsimkeys = ["b{}p{}_{}_z".format(b, p, wave) for b in [.1, .5, 1, 3, 5] for p in [.01, 2] for wave in ["alf", "fast", "slow"]]
+        allImapkeys = ["c512b{}p{}_z".format(b, p, wave) for b in [.1, .5, 1, 3, 5] for p in [.01, 2] for wave in ["alf", "fast", "slow"]]
+        #allsimkeys = ["c512b{}p{}_{}".format(b, p, wave) for b in [.1, .5, 1, 3, 5] for p in [.01, 2] for d in ["x", "y", "z"]]
+        #allImapkeys = ["c512b{}p{}_{}".format(b, p, wave) for b in [.1, .5, 1, 3, 5] for p in [.01, 2] for d in ["x", "y", "z"]]
+    else:
+        # all sim keys for non-mode decomp sims
+        allsimkeys = ["512_alfven{}_000{}_{}_z".format(i, n, ae) for n in np.arange(1, 5) for i in [1, 3, 6] for ae in ["a", "e"]]
+
     
+    if modedecomp:
+        for _i, (skey, ikey) in enumerate(zip(allsimkeys, allImapkeys)):
+            time0 = time.time()
+            xcorr_flatsky(modedecomp=modedecomp, simkey=skey, Imapkey=ikey, deglen=deglen, apotype=apotype, aposcale=aposcale, Epure=Epure, Bpure=Bpure)  
+            time1 = time.time()
+              
+            print("skey {} took {} minutes".format(_i, (time1 - time0)/60.))
+    
+    else:
+        for _i, skey in enumerate(allsimkeys):
+            time0 = time.time()
+            xcorr_flatsky(modedecomp=modedecomp, simkey=skey, deglen=deglen, apotype=apotype, aposcale=aposcale, Epure=Epure, Bpure=Bpure)  
+            time1 = time.time()
+              
+            print("skey {} took {} minutes".format(_i, (time1 - time0)/60.))
+        
     
