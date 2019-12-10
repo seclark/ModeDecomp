@@ -164,7 +164,10 @@ if __name__ == "__main__":
     if modedecomp:
         for _i, (skey, ikey) in enumerate(zip(allsimkeys, allImapkeys)):
             time0 = time.time()
-            xcorr_flatsky(modedecomp=modedecomp, simkey=skey, Imapkey=ikey, deglen=deglen, apotype=apotype, aposcale=aposcale, Epure=Epure, Bpure=Bpure)  
+            try:
+                xcorr_flatsky(modedecomp=modedecomp, simkey=skey, Imapkey=ikey, deglen=deglen, apotype=apotype, aposcale=aposcale, Epure=Epure, Bpure=Bpure)
+            except IOError:
+                print("{} does not exist".format(skey))  
             time1 = time.time()
               
             print("skey {} took {} minutes".format(_i, (time1 - time0)/60.))
