@@ -146,7 +146,7 @@ if __name__ == "__main__":
     
     apotype = "C2"
     deglen = 10
-    aposcale = 0.5
+    aposcale = 2.0 #0.5
     Epure = True
     Bpure = True
     modedecomp = False
